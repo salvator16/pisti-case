@@ -1,6 +1,7 @@
 package com.exam.pisti.components;
 
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Stack;
+
 
 /**
  * @author ahmet <br>
@@ -8,15 +9,15 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class Pile {
 
-    private LinkedBlockingDeque<Card> board = new LinkedBlockingDeque<>();
-    private LinkedBlockingDeque<Card> boardMemory = new LinkedBlockingDeque<>();
+    private Stack<Card> board = new Stack<>();
+    private Stack<Card> boardMemory = new Stack<>();
     private Bot lastWinner;
 
-    public LinkedBlockingDeque<Card> getBoard() {
+    public Stack<Card> getBoard() {
         return board;
     }
 
-    public LinkedBlockingDeque<Card> getBoardMemory() {
+    public Stack<Card> getBoardMemory() {
         return boardMemory;
     }
 

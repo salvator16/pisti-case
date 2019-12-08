@@ -3,7 +3,8 @@ package com.exam.pisti.utils;
 import com.exam.pisti.components.Card;
 
 import java.util.Map;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Stack;
+
 
 public class CardUtils {
 
@@ -16,7 +17,7 @@ public class CardUtils {
     }
 
 
-    public static Card.Rank getMinRank(LinkedBlockingDeque<Card> cards) {
+    public static Card.Rank getMinRank(Stack<Card> cards) {
 
         int smallestIndex = 15;
         synchronized (cards){

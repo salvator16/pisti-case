@@ -6,6 +6,7 @@ public class GameConstants {
 
     //Dealer constants
     public static final Integer DEAL_COUNT = 4;
+    public static final Integer ROOM_SIZE = 4;
 
     //Score constants
     public static final Integer EACH_PISTI = 10;

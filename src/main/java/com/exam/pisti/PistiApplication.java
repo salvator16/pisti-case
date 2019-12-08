@@ -4,6 +4,7 @@ import com.exam.pisti.bots.BotFactoryProvider;
 import com.exam.pisti.bots.DummyBotFactory;
 import com.exam.pisti.bots.SmartBotFactory;
 import com.exam.pisti.components.Bot;
+import com.exam.pisti.constants.GameConstants;
 import com.exam.pisti.enums.BotType;
 import com.exam.pisti.services.GameService;
 import com.exam.pisti.components.LeaderBoard;
@@ -23,7 +24,6 @@ import java.util.stream.Collectors;
 @SpringBootApplication
 public class PistiApplication {
 
-
     public static void main(String[] args) {
 
         SpringApplication.run(PistiApplication.class, args);
@@ -38,15 +38,15 @@ public class PistiApplication {
         System.out.println("--------Enter Smart Bot Name -------- :");
         String smartBot = in.next();
 
-
         DummyBotFactory factoryDummy = (DummyBotFactory) BotFactoryProvider.getFactory(BotType.DUMMY);
         SmartBotFactory factorySmart = (SmartBotFactory) BotFactoryProvider.getFactory(BotType.SMART);
         GameService gameService = new GameService();
 
         List<Bot> players;
-        List<CompletableFuture<String>> futuresList = new ArrayList<CompletableFuture<String>>();
+        List<CompletableFuture<String>> futuresList = new ArrayList<>();
 
-        for (int i = 0; i < Math.floorDiv( playerCount, 4) ; i++){
+        int gameCount = Math.floorDiv( playerCount, GameConstants.ROOM_SIZE) ;
+        while (gameCount > 0) {
             /**
              * Stateless list cause problem with for loop,
              * That s why its important to define player list for
@@ -58,12 +58,14 @@ public class PistiApplication {
             players.add(factorySmart.create(smartBot));
             players.add(factoryDummy.create(dummyBot));
             players.add(factorySmart.create(smartBot));
-        /**
-         * Adding all the paralel future in to list without BLOCKING!!!
-         * Until next step most of the future.isDone() status are false
-         * */
+            /**
+             * Adding all paralel futures in to list without BLOCKING!!!
+             * Until next step most of the future.isDone() status are false
+             * */
             futuresList.add(gameService.startAsyncGame(gameRepeat, players));
+            gameCount--;
         }
+
         CompletableFuture<List<String>> combinedFuture = all(futuresList);
         try {
             /**
@@ -75,8 +77,9 @@ public class PistiApplication {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+        } finally {
+            gameService.shutDown();
         }
-        gameService.shutDown();
         LeaderBoard.listLeaderBoard();
     }
 
@@ -87,7 +90,6 @@ public class PistiApplication {
 
     public static <T> CompletableFuture<List<T>> all(List<CompletableFuture<T>> futures) {
         CompletableFuture[] gameFutures = futures.toArray(new CompletableFuture[futures.size()]);
-
         return CompletableFuture.allOf(gameFutures)
                 .thenApply(ignored -> futures.stream()
                         .map(CompletableFuture::join)

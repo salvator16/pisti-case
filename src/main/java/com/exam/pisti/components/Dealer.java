@@ -22,7 +22,7 @@ public class Dealer {
         this.deck = new Deck();
         this.playerList = playerList;
         this.gameStatus = gameStatus;
-        arrangePileForPlayer();
+        injectPileForBots();
     }
 
     /**
@@ -30,7 +30,7 @@ public class Dealer {
      * referenced shared for non blocking tread case cause problem.
      * Should be refactored later
      */
-    private void arrangePileForPlayer() {
+    private void injectPileForBots() {
         for (Bot bot : playerList)
             bot.setPile(this.pile);
     }
@@ -55,19 +55,16 @@ public class Dealer {
             }
         } catch (EmptyDeckException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
     }
 
-    private void addFourCardToPile() throws EmptyDeckException, InterruptedException {
+    private void addFourCardToPile() throws EmptyDeckException {
         for (int i = 1; i <= GameConstants.DEAL_COUNT; i++)
-            pile.getBoard().put(deck.getCardFromDeck());
-
+            pile.getBoard().push(deck.getCardFromDeck());
     }
 
-    private void dealsFourCardToPlayers() throws EmptyDeckException, InterruptedException {
+    private void dealsFourCardToPlayers() throws EmptyDeckException {
         for (Bot bot : playerList) {
             for (int i = 1; i <= GameConstants.DEAL_COUNT; i++) {
                 bot.addCardsToBot(deck.getCardFromDeck());

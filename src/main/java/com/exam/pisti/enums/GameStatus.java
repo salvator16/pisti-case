@@ -23,16 +23,13 @@ public class GameStatus {
             return value;
         }
 
-        public void setValue(String value) {
-            this.value = value;
-        }
     }
 
-    public  synchronized String getGameTurnStatus() {
+    public String getGameTurnStatus() {
         return gameTurnStatus;
     }
 
-    public synchronized void setGameTurnStatus(STATUS status) {
+    public void setGameTurnStatus(STATUS status) {
         gameTurnStatus = status.getValue();
     }
 

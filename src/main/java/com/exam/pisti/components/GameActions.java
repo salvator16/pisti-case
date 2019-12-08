@@ -1,6 +1,6 @@
 package com.exam.pisti.components;
 
-import java.util.concurrent.LinkedBlockingDeque;
+        import java.util.Stack;
 
 /**
  * @author ahmet <br>
@@ -9,11 +9,11 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public interface GameActions {
 
-    void play() throws InterruptedException;
+    void play();
 
-    void receiveCards(LinkedBlockingDeque<Card> cards);
+    void receiveCards(Stack<Card> cards);
 
-    void calculateScore(LinkedBlockingDeque<Card> collectedCards);
+    void calculateScore(Stack<Card> collectedCards);
 
     void disposePlayer();
 

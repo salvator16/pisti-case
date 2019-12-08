@@ -5,7 +5,8 @@ import com.exam.pisti.constants.GameConstants;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Stack;
+
 
 /**
  * @author ahmet <br>
@@ -25,16 +26,15 @@ public abstract class Bot implements GameActions, Serializable {
     }
 
 
-    public void addCardsToBot(Card card) throws InterruptedException {
+    public void addCardsToBot(Card card)  {
     }
 
     @Override
-    public void play() throws InterruptedException {
-
+    public void play() {
     }
 
     @Override
-    public void receiveCards(LinkedBlockingDeque<Card> cards) {
+    public void receiveCards(Stack<Card> cards) {
 
     }
 
@@ -55,23 +55,23 @@ public abstract class Bot implements GameActions, Serializable {
 
     @Override
     public boolean isPisti(Card card) {
+        if (getPile().getBoard().size() == 1) {
+            int score = getScore();
+            score = score + GameConstants.EACH_PISTI;
+            if (card.rank().equals(Card.Rank.JACK))
+                score = score + GameConstants.EACH_PISTI;
+            setScore(score);
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean isWin(Card card) {
-        try {
-//            System.out.println(getUsername() + " is win check  and pile size " + Pile.boardSize());
-            if (pile.getBoard().size() > 0 && pile.getBoard().peekLast() != null) {
-                if ((card.rank().equals(pile.getBoard().peekLast().rank()) || card.rank().equals(Card.Rank.JACK)))
+            if (pile.getBoard().size() > 0) {
+                if ((card.rank().equals(pile.getBoard().peek().rank()) || card.rank().equals(Card.Rank.JACK)))
                     return true;
-                else {
-                    return false;
-                }
             }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
         return false;
     }
 
@@ -106,9 +106,7 @@ public abstract class Bot implements GameActions, Serializable {
      */
 
     @Override
-    public void calculateScore(LinkedBlockingDeque<Card> collectedCards) {
-//        System.out.println(getUsername() +" " +"HESAPLAMAYA GELDI");
-        synchronized (collectedCards) {
+    public void calculateScore(Stack<Card> collectedCards) {
             for (Card card : collectedCards) {
                 if (card.rank().equals(Card.Rank.JACK) || card.rank().equals(Card.Rank.ACE))
                     score = score + GameConstants.SINGLE_POINT;
@@ -123,8 +121,6 @@ public abstract class Bot implements GameActions, Serializable {
             LeaderBoard.registerBotScore(this);
 
             this.setScore(0);
-        }
-
     }
 
     @Override
@@ -167,14 +163,14 @@ public abstract class Bot implements GameActions, Serializable {
         this.pile = pile;
     }
 
-    protected void operateBoardActions(LinkedBlockingDeque<Card> collectedCards) {
+    protected void operateBoardActions(Stack<Card> collectedCards) {
         collectedCards.addAll(getPile().getBoard());
         getPile().getBoardMemory().addAll(getPile().getBoard());
         getPile().getBoard().clear();
         getPile().setLastWinner(this);
     }
 
-    protected Card findCard(Card.Rank rank, LinkedBlockingDeque<Card> playerHand) {
+    protected Card findCard(Card.Rank rank, Stack<Card> playerHand) {
         Iterator itr = playerHand.iterator();
         Card card;
         while (itr.hasNext()) {

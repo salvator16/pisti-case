@@ -1,12 +1,10 @@
 package com.exam.pisti.components;
 
-import com.exam.pisti.constants.GameConstants;
 import com.exam.pisti.utils.CardUtils;
 
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,36 +17,36 @@ import java.util.stream.Collectors;
 
 public class SmartBot extends Bot {
 
-    private LinkedBlockingDeque<Card> playerHand;
-    private LinkedBlockingDeque<Card> collectedCards;
+    private Stack<Card> playerHand;
+    private Stack<Card> collectedCards;
 
 
     public SmartBot() {
-        this.playerHand = new LinkedBlockingDeque<Card>();
-        this.collectedCards = new LinkedBlockingDeque<>();
+        this.playerHand = new Stack<>();
+        this.collectedCards = new Stack<>();
     }
 
     @Override
-    public void addCardsToBot(Card card) throws InterruptedException {
-        playerHand.put(card);
+    public void addCardsToBot(Card card) {
+        playerHand.push(card);
     }
 
     @Override
-    public void play() throws InterruptedException {
+    public void play() {
         Card card = decideCardToPlay();
 
         if (isWin(card)) {
             isPisti(card);
-            getPile().getBoard().put(card);
+            getPile().getBoard().push(card);
             operateBoardActions(collectedCards);
         } else {
-            getPile().getBoard().put(card);
+            getPile().getBoard().push(card);
         }
         playerHand.remove(card);
     }
 
     @Override
-    public void receiveCards(LinkedBlockingDeque<Card> cards) {
+    public void receiveCards(Stack<Card> cards) {
         collectedCards.addAll(cards);
     }
 
@@ -56,11 +54,10 @@ public class SmartBot extends Bot {
     public Card decideCardToPlay() {
         Card card = null;
         if (getPile().getBoard().size() > 0) {
-            card = findCard(getPile().getBoard().peekLast().rank(),playerHand);
+            card = findCard(getPile().getBoard().peek().rank(),playerHand);
             if (card == null)
                 card = hasJack();
         }
-
         /**
          * smart analyze and decide to card
          * try to find most discarded card to the pile
@@ -85,15 +82,7 @@ public class SmartBot extends Bot {
 
     @Override
     public boolean isPisti(Card card) {
-        if (getPile().getBoard().size() == 1) {
-            int score = getScore();
-            score = score + GameConstants.EACH_PISTI;
-            if (card.rank().equals(Card.Rank.JACK))
-                score = score + GameConstants.EACH_PISTI;
-            setScore(score);
-            return true;
-        }
-        return false;
+        return super.isPisti(card);
     }
 
     @Override
@@ -102,7 +91,7 @@ public class SmartBot extends Bot {
     }
 
     @Override
-    public void calculateScore(LinkedBlockingDeque<Card> collectedCards) {
+    public void calculateScore(Stack<Card> collectedCards) {
         super.calculateScore(collectedCards);
         collectedCards.clear();
         getPile().getBoardMemory().clear();
@@ -113,20 +102,17 @@ public class SmartBot extends Bot {
         calculateScore(this.collectedCards);
     }
 
-    private synchronized Card analyzeCard() {
+    private Card analyzeCard() {
         Map<Card.Rank, Long> grouped = new ConcurrentHashMap<>();
-        synchronized (getPile().getBoardMemory()) {
             if (getPile().getBoardMemory().size() > 0) {
                 grouped = getPile().getBoardMemory().stream()
                         .map(Card::rank)
                         .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
             }
-        }
 
         long countOfCard = 0;
         long maxNo = countOfCard;
         Card.Rank rank = CardUtils.getMinRank(playerHand);
-        synchronized (playerHand) {
             for (Card card1 : playerHand) {
                 countOfCard = grouped.get(card1.rank()) == null ? 0 : grouped.get(card1.rank());
                 if (countOfCard > maxNo) {
@@ -134,7 +120,6 @@ public class SmartBot extends Bot {
                     rank = card1.rank();
                 }
             }
-        }
         return findCard(rank,playerHand);
 
     }

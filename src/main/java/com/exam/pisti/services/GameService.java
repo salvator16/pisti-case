@@ -20,8 +20,7 @@ public class GameService {
 
     public CompletableFuture<String> startAsyncGame(int gameCount, List<Bot> players) {
         Game game = new Game(gameCount,players);
-        CompletableFuture<String> future = new CompletableFuture<>();
-        return future.supplyAsync(() -> game.startGame(), executorService);
+        return CompletableFuture.supplyAsync(() -> game.startGame(), executorService);
     }
 
     /**

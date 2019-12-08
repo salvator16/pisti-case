@@ -13,8 +13,8 @@ public class Game {
     private final Dealer dealer;
     private final Pile pile;
     private final List<Bot> players;
-    private final int repeatCount;
     private final GameStatus gameStatus;
+    private final int repeatCount;
 
     public Game(int repeatCount, List<Bot> players) {
         this.pile = new Pile();
@@ -27,7 +27,6 @@ public class Game {
      * startGame function has return type just for symbolize future s type
      * can be deleted later
      * */
-
 
     public String startGame() {
         for (int i = 1; i <= repeatCount; i++) {
@@ -46,7 +45,6 @@ public class Game {
         dealer.deal();
         while (gameStatus.getGameTurnStatus().equals(GameStatus.STATUS.START.getValue())
                 || gameStatus.getGameTurnStatus().equals(GameStatus.STATUS.TURNING.getValue())) {
-            synchronized (players) {
                 for (Bot bot : players) {
                     if (!players.get(3).isCardAvailable()) {
                         dealer.deal();
@@ -57,9 +55,6 @@ public class Game {
                         bot.disposePlayer();
                     }
                 }
-            }
-
-
         }
     }
 }

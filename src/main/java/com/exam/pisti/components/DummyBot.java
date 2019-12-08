@@ -1,10 +1,8 @@
 package com.exam.pisti.components;
 
-import com.exam.pisti.constants.GameConstants;
 import com.exam.pisti.utils.CardUtils;
 
-import java.util.Iterator;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Stack;
 /**
  * @author ahmet <br>
  * <b>Dummy bot class symbolize player type in game
@@ -12,22 +10,21 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class DummyBot extends Bot {
 
-    private LinkedBlockingDeque<Card> playerHand;
-    private LinkedBlockingDeque<Card> collectedCards;
+    private Stack<Card> playerHand;
+    private Stack<Card> collectedCards;
 
     public DummyBot() {
-        this.playerHand = new LinkedBlockingDeque<Card>();
-        this.collectedCards = new LinkedBlockingDeque<Card>();
-
+        this.playerHand = new Stack<>();
+        this.collectedCards = new Stack<>();
     }
 
     @Override
-    public void addCardsToBot(Card card) throws InterruptedException {
-        playerHand.put(card);
+    public void addCardsToBot(Card card) {
+        playerHand.push(card);
     }
 
     @Override
-    public void play() throws InterruptedException {
+    public void play() {
         /**
          * Choose card to play
          * */
@@ -37,11 +34,11 @@ public class DummyBot extends Bot {
          * */
         if (isWin(card)) {
             isPisti(card);
-            getPile().getBoard().put(card);
+            getPile().getBoard().push(card);
             operateBoardActions(collectedCards);
 
         } else {
-            getPile().getBoard().put(card);
+            getPile().getBoard().push(card);
         }
 
         /**
@@ -52,7 +49,7 @@ public class DummyBot extends Bot {
     }
 
     @Override
-    public void receiveCards(LinkedBlockingDeque<Card> cards) {
+    public void receiveCards(Stack<Card> cards) {
         collectedCards.addAll(cards);
     }
 
@@ -60,7 +57,7 @@ public class DummyBot extends Bot {
     public Card decideCardToPlay() {
         Card card = null;
         if (getPile().getBoard().size() > 0) {
-            card = findCard(getPile().getBoard().peekLast().rank(), playerHand);
+            card = findCard(getPile().getBoard().peek().rank(), playerHand);
             if (card == null)
                 card = hasJack();
         }
@@ -87,22 +84,14 @@ public class DummyBot extends Bot {
 
     @Override
     public boolean isPisti(Card card) {
-        if (getPile().getBoard().size() == 1) {
-            int score = getScore();
-            score = score + GameConstants.EACH_PISTI;
-            if (card.rank().equals(Card.Rank.JACK))
-                score = score + GameConstants.EACH_PISTI;
-            setScore(score);
-            return true;
-        }
-        return false;
+       return super.isPisti(card);
     }
     /**
      * Calculate score based on collected cards
      * then flush collected card for next iteration of game
      */
     @Override
-    public void calculateScore(LinkedBlockingDeque<Card> collectedCards) {
+    public void calculateScore(Stack<Card> collectedCards) {
         super.calculateScore(collectedCards);
         collectedCards.clear();
     }

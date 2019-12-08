@@ -26,9 +26,7 @@ public class SmartBotTest {
             Assert.assertEquals(pile.getBoard().size(), 2);
 
             Assert.assertEquals(bot.isCardAvailable(), true);
-
-
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             Assert.fail("Cannot play something went wrong");
         }
 
@@ -47,10 +45,10 @@ public class SmartBotTest {
             bot.addCardsToBot(deck.getCardFromDeck());
             bot.addCardsToBot(deck.getCardFromDeck());
             bot.addCardsToBot(deck.getCardFromDeck());
-        } catch (InterruptedException e) {
-            Assert.fail("Operation Interrupted");
         } catch (EmptyDeckException e) {
             Assert.fail("Deck Bos");
+        } catch (Exception e) {
+            Assert.fail("Operation Interrupted");
         }
 
 

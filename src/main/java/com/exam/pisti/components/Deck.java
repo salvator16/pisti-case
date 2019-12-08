@@ -4,7 +4,7 @@ import com.exam.pisti.exceptions.EmptyDeckException;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Stack;
 
 /**
  * @author ahmet <br>
@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class Deck {
 
-    private LinkedBlockingDeque<Card> deck = new LinkedBlockingDeque<Card>() ;
+    private Stack<Card> deck = new Stack<Card>() ;
 
     public Deck() {
         initializeDeck();
@@ -23,7 +23,7 @@ public class Deck {
         deck = getShuffledDeck();
     }
 
-    private LinkedBlockingDeque<Card> getShuffledDeck() {
+    private Stack<Card> getShuffledDeck() {
         List<Card> cardList = Card.newDeck();
         Collections.shuffle(cardList);
         deck.addAll(cardList);

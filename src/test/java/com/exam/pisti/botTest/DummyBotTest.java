@@ -27,7 +27,7 @@ public class DummyBotTest {
             Assert.assertEquals(bot.isCardAvailable(), true);
 
 
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             Assert.fail("Cannot play something went wrong");
         }
 
@@ -46,10 +46,10 @@ public class DummyBotTest {
             bot.addCardsToBot(deck.getCardFromDeck());
             bot.addCardsToBot(deck.getCardFromDeck());
             bot.addCardsToBot(deck.getCardFromDeck());
-        } catch (InterruptedException e) {
-            Assert.fail("Operation Interrupted");
         } catch (EmptyDeckException e) {
             Assert.fail("Deck Bos");
+        } catch (Exception e) {
+            Assert.fail("Operation Interrupted");
         }
 
 

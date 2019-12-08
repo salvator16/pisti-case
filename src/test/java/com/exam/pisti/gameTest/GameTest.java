@@ -38,7 +38,7 @@ public class GameTest {
 
     }
 
-    public void testLeaderBoard() {
+   public void testLeaderBoard() {
         LeaderBoard.listLeaderBoard();
     }
 
@@ -55,7 +55,6 @@ public class GameTest {
         players.add(smartBotFactory.create("Smart"));
 
         game = new Game(2, players);
-
 
     }
 
